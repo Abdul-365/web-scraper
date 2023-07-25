@@ -2,6 +2,7 @@ import express from 'express';
 import bodyparser from 'body-parser';
 import cors from 'cors';
 import axios from 'axios';
+import * as cheerio from 'cheerio';
 require('dotenv').config();
 
 const app = express();
@@ -21,28 +22,38 @@ app.use(cors(corsOptions));
 app.get('/', async function (req, res) {
 
     try {
-        const response = await axios.get('https://www.googleapis.com/customsearch/v1', {
+        let response = await axios.get('https://www.googleapis.com/customsearch/v1', {
             params: {
                 key: process.env.CS_API_KEY,
                 cx: process.env.CX,
-                q: req.query.q
+                q: req.query.q,
+                num: 5
             },
         });
         const searchResults = response.data;
-        const links = searchResults.items.slice(0, 5).map(item => item.link);
-        res.json(links);
-        // const links = [
-        //     "https://en.wikipedia.org/wiki/Banana",
-        // ]
+        const links = searchResults.items.map(item => item.link);
 
-        // axios.get('https://app.scrapingbee.com/api/v1', {
-        //     params: {
-        //         'api_key': '5IM18AO798PYGG3NLF6FMNRDZZ4532QH8GDNATJZXH99I90YK0L0VH3HFGTOU5OK16TX3B16JTQJA7TL',
-        //         'url': 'http://httpbin.scrapingbee.com/anything?json',
-        //     }
-        // }).then(function (response) {
-        //     console.log(response);
-        // })
+        const responses = await Promise.all(
+            links.map(link =>
+                axios.get('https://app.scrapingbee.com/api/v1', {
+                    params: {
+                        'api_key': process.env.SB_API_KEY,
+                        'url': link,
+                        render_js: false
+                    }
+                })
+            )
+        );
+
+        const texts = responses.map(({ data }) => {
+            const $ = cheerio.load(data);
+            $('style, script', 'img').remove();
+            // Remove HTML comments
+            $.root().contents().filter((i, el) => el.type === 'comment').remove();
+            return $('body').text().replace(/\n\s*\n/g, '\n');
+        });
+        res.json(texts);
+
     } catch (error) {
         res.send(error);
     }
