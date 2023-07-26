@@ -27,7 +27,7 @@ app.get('/', async function (req, res) {
                 key: process.env.CS_API_KEY,
                 cx: process.env.CX,
                 q: req.query.q,
-                num: 5
+                num: 1
             },
         });
         const searchResults = response.data;
@@ -47,12 +47,14 @@ app.get('/', async function (req, res) {
 
         const texts = responses.map(({ data }) => {
             const $ = cheerio.load(data);
-            $('style, script', 'img').remove();
-            // Remove HTML comments
-            $.root().contents().filter((i, el) => el.type === 'comment').remove();
-            return $('body').text().replace(/\n\s*\n/g, '\n');
+            return $('body *')
+                .contents()
+                .toArray()
+                .map(element => (element.type === 'text' ? $(element).text().trim() : null))
+                .filter(text => text)
+                .join(' ');
         });
-        res.json(texts);
+        res.send(texts);
 
     } catch (error) {
         res.send(error);
