@@ -2,7 +2,7 @@ import express from 'express';
 import bodyparser from 'body-parser';
 import cors from 'cors';
 import axios from 'axios';
-import * as cheerio from 'cheerio';
+import { convert } from 'html-to-text';
 require('dotenv').config();
 
 const app = express();
@@ -46,13 +46,7 @@ app.get('/', async function (req, res) {
         );
 
         const texts = responses.map(({ data }) => {
-            const $ = cheerio.load(data);
-            return $('body *')
-                .contents()
-                .toArray()
-                .map(element => (element.type === 'text' ? $(element).text().trim() : null))
-                .filter(text => text)
-                .join(' ');
+            return convert(data);
         });
         res.send(texts);
 
