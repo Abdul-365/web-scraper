@@ -21,11 +21,11 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 
-app.get('/api', function (req, res) {
+app.get('/', function (req, res) {
     res.send('Hello World!');
 })
 
-app.get('/api/search', async function (req, res) {
+app.get('/search', async function (req, res) {
 
     try {
         let response = await axios.get('https://www.googleapis.com/customsearch/v1', {
