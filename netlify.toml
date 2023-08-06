@@ -1,4 +1,12 @@
 [build]
+  base = "frontend"
+  command = "npm run build"
+  publish = "build"
+
+[context.production.environment]
+  REACT_APP_API_URL = 'https://web-scraper-api-365.netlify.app/api'
+
+[build.backend]
   base = "backend"
   command = "npm run build"
   functions = "build"
@@ -8,7 +16,6 @@
   node_bundler = "esbuild"
 
 [[redirects]]
-  force = true
-  from = "/*"
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
   status = 200
-  to = "/.netlify/functions/api/:splat"
