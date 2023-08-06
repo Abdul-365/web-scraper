@@ -4,9 +4,9 @@
   "description": "web-scraper",
   "main": "index.js",
   "scripts": {
-    "start": "node ./build/index.js",
-    "dev": "nodemon ./server/index.js --exec babel-node -e js",
-    "build": "babel -d ./build ./server"
+    "start": "node ./build/app.js",
+    "dev": "nodemon ./functions/app.js --exec babel-node -e js",
+    "build": "babel -d ./build ./functions"
   },
   "author": "Abdul Mannan",
   "license": "ISC",
