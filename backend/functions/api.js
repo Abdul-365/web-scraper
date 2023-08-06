@@ -21,7 +21,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 
-app.get('/', async function (req, res) {
+app.get('/', function (req, res) {
     res.send('Hello World!');
 })
 

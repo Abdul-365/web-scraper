@@ -1,7 +1,6 @@
 [build]
   command = "npm run build"
   functions = "build"
-  publish = "public"
 
 [functions]
   external_node_modules = ["express"]
@@ -9,6 +8,6 @@
 
 [[redirects]]
   force = true
-  from = "/api/*"
+  from = "/*"
   status = 200
   to = "/.netlify/functions/api/:splat"
