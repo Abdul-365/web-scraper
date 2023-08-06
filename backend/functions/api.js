@@ -1,4 +1,5 @@
 import express from 'express';
+import serverless from 'serverless-http';
 import bodyparser from 'body-parser';
 import cors from 'cors';
 import axios from 'axios';
@@ -55,6 +56,4 @@ app.get('/', async function (req, res) {
     }
 });
 
-app.listen(PORT, () =>
-    console.log(`Server running on port ${PORT}`)
-);
+exports.handler = serverless(app);
