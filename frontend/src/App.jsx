@@ -10,7 +10,6 @@ export default function App() {
         setSearchTerm(e.target.value)
     }
 
-
     function getResults(e) {
         e.preventDefault();
         axios.get(process.env.REACT_APP_API_URL, { params: { q: searchTerm } })
@@ -22,7 +21,12 @@ export default function App() {
         <>
             <input type="text" placeholder="Search" value={searchTerm} onChange={handleSearch} />
             <button onClick={getResults} type='Submit'>Search</button>
-            {results.map(result => <p>{result}</p>)}
+            {results.map((result, index) =>
+                <>
+                    <strong><p>Result {index + 1}</p></strong>
+                    <p>{result}</p>
+                </>
+            )}
         </>
     );
 }
